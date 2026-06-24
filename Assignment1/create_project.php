@@ -19,19 +19,18 @@ $guilds = get_guilds();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Player</title>
+    <title>Create Project</title>
 </head>
 
 <body>
     <header></header>
     <a href="<?php echo $back_url ?>">
         &lt; Back</a>
-    <h1>New Player:</h1>
-    <form action="./details/guild.php?id=<?php echo $guild_id ?>" method="post">
-        <input type="hidden" value="<?php echo $guild_id ?>" name="create_player" id="create_player" />
+    <h1>New Project:</h1>
+    <form action="#" method="post">
         <div style="margin-bottom: 0.75rem;">
-            <label for="username">Username</label>
-            <input type="text" name="username" id="username">
+            <label for="name">Project Name</label>
+            <input type="text" name="name" id="name">
         </div>
         <div style="margin-bottom: 0.75rem;"><label for="province">Province</label><select name="province" id="province">
                 <option value="-1">--Select Guild--</option>

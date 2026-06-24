@@ -4,7 +4,7 @@ function create_connection()
     $hostname = "localhost";
     $username = "root";
     $password = "root";
-    $dbname = "http5126_final";
+    $dbname = "wdp_a1";
 
     $conn = mysqli_connect($hostname, $username, $password, $dbname);
 
@@ -63,10 +63,27 @@ function get_guild_players($guild_id)
         $players = $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    //var_dump($car);
     $conn->close();
 
     return $players;
+}
+
+function create_guild_player($username, $guild_id)
+{
+
+    $conn = create_connection();
+
+    $sql = "INSERT INTO `players` (`username`, `guild_id`) VALUES (?, ?)";
+    if ($query = $conn->prepare($sql))
+    {
+        $query->bind_param("ss", $username, $guild_id);
+        $query->execute();
+        $result = $query->get_result();
+    }
+
+    $conn->close();
+
+    return $result;
 }
 
 function get_guild_projects($guild_id)
@@ -83,7 +100,6 @@ function get_guild_projects($guild_id)
         $projects = $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    //var_dump($car);
     $conn->close();
 
     return $projects;
@@ -111,7 +127,11 @@ function get_project_items($project_id)
 
     $conn = create_connection();
 
-    $sql = "SELECT count, fulfilled, item_data.name AS `name` FROM `project_items` JOIN `item_data` ON item_data_id = item_data.id WHERE project_id = ?";
+    $sql = "SELECT count, fulfilled, item_data.name AS `name` 
+    FROM `project_items` 
+    JOIN `item_data` ON item_data_id = item_data.id
+    WHERE project_id = ?";
+
     if ($query = $conn->prepare($sql))
     {
         $query->bind_param("s", $project_id);
@@ -120,7 +140,6 @@ function get_project_items($project_id)
         $items = $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    //var_dump($car);
     $conn->close();
 
     return $items;
@@ -130,7 +149,11 @@ function get_project_tasks($project_id)
 {
     $conn = create_connection();
 
-    $sql = "SELECT project_tasks.id AS id, players.username AS username FROM `project_tasks` JOIN players ON player_id = players.id WHERE project_id = ?";
+    $sql = "SELECT project_tasks.id AS id, players.username AS username 
+    FROM `project_tasks` 
+    JOIN players ON player_id = players.id 
+    WHERE project_id = ?";
+
     if ($query = $conn->prepare($sql))
     {
         $query->bind_param("s", $project_id);
@@ -139,7 +162,6 @@ function get_project_tasks($project_id)
         $tasks = $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    //var_dump($car);
     $conn->close();
 
     return $tasks;
@@ -147,10 +169,15 @@ function get_project_tasks($project_id)
 
 function get_task_details($task_id)
 {
-    $test = "SELECT players.username, project_items.count, item_data.name FROM `task_items` JOIN `project_tasks` ON project_tasks_id = project_tasks.id JOIN `players` ON project_tasks.player_id = players.id JOIN project_items ON project_items_id = project_items.id JOIN item_data ON project_items.item_data_id = item_data.id WHERE project_tasks.id = ?;";
     $conn = create_connection();
 
-    $sql = "SELECT project_items.count AS item_count, item_data.name AS item_name FROM `task_items` JOIN `project_tasks` ON project_tasks_id = project_tasks.id JOIN project_items ON project_items_id = project_items.id JOIN item_data ON project_items.item_data_id = item_data.id WHERE project_tasks.id = ?;";
+    $sql = "SELECT project_items.count AS item_count, item_data.name AS item_name 
+    FROM `task_items` 
+    JOIN `project_tasks` ON project_tasks_id = project_tasks.id 
+    JOIN project_items ON project_items_id = project_items.id 
+    JOIN item_data ON project_items.item_data_id = item_data.id 
+    WHERE project_tasks.id = ?;";
+
     if ($query = $conn->prepare($sql))
     {
         $query->bind_param("s", $task_id);
@@ -159,8 +186,57 @@ function get_task_details($task_id)
         $items = $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    //var_dump($car);
     $conn->close();
 
     return $items;
 }
+
+// function create_project($guild_id, $project_name, $items)
+// {
+//     $conn = create_connection();
+
+//     $sql = "INSERT INTO
+//     `projects` (`guild_id`, `name`, `start_date`)
+// VALUES
+//     (
+//         ?,
+//         ?,
+//         CURRENT_DATE()
+//     );
+
+// INSERT INTO
+//     `project_items` (
+//         `project_id`,
+//         `item_data_id`,
+//         `count`,
+//         `fulfilled`
+//     )
+// VALUES
+//     (LAST_INSERT_ID (), 5066, 3, false),
+//     (LAST_INSERT_ID (), 12916, 3, false),
+//     (LAST_INSERT_ID (), 12531, 3, false),
+//     (LAST_INSERT_ID (), 10099, 3, false);";
+
+//     foreach ($items as $item)
+//     {
+//         $sql = $sql . "(LAST_INSERT_ID (), ?, ?, false);";
+//     }
+
+//     if ($query = $conn->prepare($sql))
+//     {
+//         $query->bind_param("ss", $guild_id, $project_name);
+
+//         foreach ($items as $item)
+//         {
+//             $query->bind_param("ss", $item["id"], $item["count"]);
+//         }
+//         $query->execute();
+//         $result = $query->get_result();
+//         $items = $result->fetch_all(MYSQLI_ASSOC);
+//     }
+
+//     //var_dump($car);
+//     $conn->close();
+
+//     return $items;
+// }
